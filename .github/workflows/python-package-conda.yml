@@ -16,7 +16,7 @@ jobs:
       with:
         python-version: '3.8.15'
         environment-file: environment.yml
-        activate-environment: myenv
+        activate-environment: fastapi
         auto-activate-base: false
 
     - name: Conda Info
