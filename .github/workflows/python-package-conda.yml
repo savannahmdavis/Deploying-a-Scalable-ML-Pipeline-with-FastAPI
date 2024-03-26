@@ -10,28 +10,26 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.8.15
-      uses: actions/setup-python@v3
+
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v2
       with:
         python-version: '3.8.15'
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-    - name: Initialize Conda
-      run: conda init bash
-    - name: Install dependencies
-      run: |
-        source activate base
-        conda env update --file environment.yml
+        environment-file: environment.yml
+        activate-environment: myenv
+        auto-activate-base: false
+
+    - name: Conda Info
+      run: conda info
+
+    - name: Install Additional Dependencies
+      run: conda install pytest flake8
+
     - name: Lint with flake8
       run: |
-        conda install flake8
-        # stop the build if there are Python syntax errors or undefined names
+        # If the linter and tests are in the environment, no need to install them again
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
     - name: Test with pytest
-      run: |
-        conda install pytest
-        pytest
+      run: pytest
